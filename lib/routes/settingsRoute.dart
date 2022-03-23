@@ -1,5 +1,10 @@
 //ignore_for_file: file_names
+import 'dart:io';
+
 import 'package:easyvpn/widgets/AboutListTile.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../model/themeCollection.dart';
@@ -101,6 +106,52 @@ class _SettingsRouteState extends State<SettingsRoute> {
           //     'Show notification when Prime VPN is not connected.',
           //     notifySwitch,
           //     (value) => setState(() => notifySwitch = value)),
+          Platform.isAndroid
+              ? ListTile(
+                  // tileColor: AppColors.BLACK,
+                  title: Text(
+                    '忽略电池优化',
+                    style: Theme.of(context).primaryTextTheme.subtitle1,
+                  ),
+                  // leading: Icon(
+                  //   Icons.battery_saver,
+                  //   color: Colors.white,
+                  //   size: 30.sp,
+                  // ),
+                  onTap: () async {
+                    if (Platform.isAndroid) {
+                      var hasPermissions =
+                          await FlutterBackground.hasPermissions;
+                      if (!hasPermissions) {
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  // title: Text(S
+                                  //     .of(context)
+                                  //     .background_operation_dialog_title),
+                                  content: Text('忽略电池优化有效防止意外断线'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        await FlutterBackground.initialize();
+                                      },
+                                      child: Text('确定'),
+                                    ),
+                                  ]);
+                            });
+                      } else {
+                        Scaffold.of(context).showSnackBar(
+                            new SnackBar(content: new Text('已忽略电池优化')));
+                      }
+                    } else {
+                      Scaffold.of(context).showSnackBar(
+                          new SnackBar(content: new Text('暂不支持忽略电池优化')));
+                    }
+                  }, //........................................
+                )
+              : SizedBox(),
           listTileSet('暗夜模式', '减少眩光，改善夜间视野。', themeData.isDarkActive, (value) {
             themeData.setDarkTheme(value);
           }),

@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
+    FlutterVpn.prepare();
     super.initState();
     Future.delayed(const Duration(milliseconds: 200)).then((value) {
       Provider.of<UserPreference>(context, listen: false).getServersList();
